@@ -1,6 +1,7 @@
 package com.miguel.asesoftwaretechnicaltest.presentation.home
 
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,7 +15,10 @@ import kotlinx.coroutines.launch
 class HomeViewModel(private val fetchPhotosUseCase: FetchPhotosUseCase ) : ViewModel() {
 
     companion object {
-        val homeViewModel = HomeViewModel(FetchPhotosUseCase.fetchPhotosUseCase )
+        fun getInstance(context: Context): HomeViewModel {
+            val fetchPhotosUseCase = FetchPhotosUseCase.getInstance(context)
+            return HomeViewModel(fetchPhotosUseCase)
+        }
     }
 
     private val _state = MutableStateFlow(HomeStates())

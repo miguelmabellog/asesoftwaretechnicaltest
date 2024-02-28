@@ -1,5 +1,6 @@
 package com.miguel.asesoftwaretechnicaltest
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -12,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.text.BasicText
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -28,10 +28,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.room.Room
 import com.miguel.asesoftwaretechnicaltest.presentation.detail.DetailScreen
 import com.miguel.asesoftwaretechnicaltest.presentation.home.HomeScreen
 import com.miguel.asesoftwaretechnicaltest.presentation.home.HomeViewModel
@@ -53,9 +58,11 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MyApp() {
     val navController = rememberNavController()
+    val context = LocalContext.current
+
     NavHost(navController, startDestination = "splash") {
         composable("splash") { SplashScreen(navController) }
-        composable("home") { HomeScreen(navController,HomeViewModel.homeViewModel) }
+        composable("home") { HomeScreen(navController,HomeViewModel.getInstance(context)) }
         composable("detail/{photoId}") { backStackEntry ->
             val arguments = requireNotNull(backStackEntry.arguments)
             val photoId = arguments.getInt("photoId")
