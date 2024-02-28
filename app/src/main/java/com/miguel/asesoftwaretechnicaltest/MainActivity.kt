@@ -32,6 +32,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.miguel.asesoftwaretechnicaltest.presentation.detail.DetailScreen
 import com.miguel.asesoftwaretechnicaltest.presentation.home.HomeScreen
 import com.miguel.asesoftwaretechnicaltest.presentation.home.HomeViewModel
 
@@ -54,8 +55,12 @@ fun MyApp() {
     val navController = rememberNavController()
     NavHost(navController, startDestination = "splash") {
         composable("splash") { SplashScreen(navController) }
-        composable("home") { HomeScreen(HomeViewModel.homeViewModel) }
-        composable("detail") { HomeScreen() }
+        composable("home") { HomeScreen(navController,HomeViewModel.homeViewModel) }
+        composable("detail/{photoId}") { backStackEntry ->
+            val arguments = requireNotNull(backStackEntry.arguments)
+            val photoId = arguments.getInt("photoId")
+            DetailScreen(photoId = photoId,navController)
+        }
     }
 }
 

@@ -1,6 +1,7 @@
 package com.miguel.asesoftwaretechnicaltest.presentation.home
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,13 +20,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.compose.rememberImagePainter
 import com.miguel.asesoftwaretechnicaltest.repository.PhotoDomain
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(viewModel: HomeViewModel = viewModel()) {
+fun HomeScreen(navController: NavController,viewModel: HomeViewModel = viewModel()) {
 
     val screenstate by viewModel.state.collectAsState()
 
@@ -47,7 +49,9 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel()) {
                     }else{
                         LazyColumn {
                             items(screenstate.photosState) { photo ->
-                                PhotoItem(photo = photo)
+                                PhotoItem(photo = photo) {
+                                    navController.navigate("detail/${photo.id}")
+                                }
                             }
                         }
                     }
@@ -60,8 +64,8 @@ fun HomeScreen(viewModel: HomeViewModel = viewModel()) {
 }
 
 @Composable
-fun PhotoItem(photo: PhotoDomain) {
-    Row{
+fun PhotoItem(photo: PhotoDomain, onItemClick: () -> Unit) {
+    Row(modifier = Modifier.clickable(onClick = onItemClick)){
         AsyncImage(
             modifier = Modifier.size(100.dp),
             model = photo.url,
