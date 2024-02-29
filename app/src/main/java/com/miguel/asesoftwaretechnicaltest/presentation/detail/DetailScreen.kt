@@ -18,6 +18,8 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -25,14 +27,17 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.miguel.asesoftwaretechnicaltest.data.PhotoEntity
 
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -43,8 +48,10 @@ fun DetailScreen(photoId: Int?,navController: NavController, viewModel: DetailVi
     viewModel.findPhotoById(photoId)
 
     val photoState by viewModel.state.collectAsState(initial = DetailState())
-
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
     Scaffold(
+
         topBar = {
             TopAppBar(
                 title = { Text(text = "Photo Detail") },
@@ -61,7 +68,9 @@ fun DetailScreen(photoId: Int?,navController: NavController, viewModel: DetailVi
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                },
+                    if(photoId!=null) {
+                        viewModel.deletePhotoById(photoId)
+                    } },
                 modifier = Modifier.padding(16.dp)
             ) {
                 Icon(
@@ -69,6 +78,11 @@ fun DetailScreen(photoId: Int?,navController: NavController, viewModel: DetailVi
                     contentDescription = "Delete"
                 )
             }
+        },
+
+        snackbarHost = {
+
+            SnackbarHost(hostState = snackbarHostState)
         },
         content = { innerpadding ->
             Log.i("valorDePhoto",photoState.photo.toString())
@@ -94,6 +108,17 @@ fun DetailScreen(photoId: Int?,navController: NavController, viewModel: DetailVi
             }
         }
     )
+    LaunchedEffect(photoState.showSnackBar) {
+        if (photoState.showSnackBar) {
+            val message=if (viewModel.state.value.dataDeleted){
+                "data deleted"
+            }else{
+                "Error to delete data"
+            }
+            snackbarHostState.showSnackbar(message)
+            viewModel.resetSnackBar()
+        }
+    }
 
 
 
@@ -112,3 +137,4 @@ fun ImageFromUrl(url: String?) {
     )
 
 }
+

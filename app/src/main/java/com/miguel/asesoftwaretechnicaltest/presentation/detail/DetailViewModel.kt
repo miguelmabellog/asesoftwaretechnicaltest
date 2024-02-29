@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.miguel.asesoftwaretechnicaltest.data.PhotoEntity
 import com.miguel.asesoftwaretechnicaltest.repository.PhotoDomain
+import com.miguel.asesoftwaretechnicaltest.usecase.DeletePhotoUseCase
 import com.miguel.asesoftwaretechnicaltest.usecase.Error
 import com.miguel.asesoftwaretechnicaltest.usecase.GetPhotoByIdUseCase
 import com.miguel.asesoftwaretechnicaltest.usecase.Success
@@ -13,11 +14,12 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class DetailViewModel(private val getPhotoByIdUseCase: GetPhotoByIdUseCase) : ViewModel() {
+class DetailViewModel(private val getPhotoByIdUseCase: GetPhotoByIdUseCase,private val deletePhotoUseCase: DeletePhotoUseCase) : ViewModel() {
     companion object {
         fun getInstance(context: Context): DetailViewModel {
             val getPhotoByIdUseCase = GetPhotoByIdUseCase.getInstance(context)
-            return DetailViewModel(getPhotoByIdUseCase)
+            val deletePhotoUseCase= DeletePhotoUseCase.getInstance(context)
+            return DetailViewModel(getPhotoByIdUseCase,deletePhotoUseCase)
         }
     }
 
@@ -43,6 +45,26 @@ class DetailViewModel(private val getPhotoByIdUseCase: GetPhotoByIdUseCase) : Vi
 
         }
 
+    }
+    fun deletePhotoById(photoId: Int) {
+        viewModelScope.launch {
+            _state.value = _state.value.copy(isLoading = true)
+            when (val result = deletePhotoUseCase.execute(photoId)) {
+                is Error -> {
+                    Log.e("Error Delete photo", result.message)
+                    _state.value = _state.value.copy(isError = true, isLoading = false, dataDeleted = false, showSnackBar = true)
+                }
+                is Success -> {
+                    _state.value = _state.value.copy(isError = false, isLoading = false, dataDeleted = true, showSnackBar = true)
+                }
+            }
+
+        }
+
+    }
+
+    fun resetSnackBar(){
+        _state.value = _state.value.copy(isError = false, isLoading = false, dataDeleted = false, showSnackBar = false)
     }
 
 }
