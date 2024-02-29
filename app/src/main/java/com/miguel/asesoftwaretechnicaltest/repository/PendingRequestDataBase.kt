@@ -28,6 +28,9 @@ interface PendingRequestDao {
     @Query("SELECT * FROM pending_requests")
     suspend fun getAllPendingRequests(): List<PendingRequest>
 
+    @Query("DELETE FROM pending_requests WHERE photoId = :photoId")
+    suspend fun deletePendingRequestsByPhotoId(photoId: Int)
+
 }
 
 @Database(entities = [PendingRequest::class], version = 1)

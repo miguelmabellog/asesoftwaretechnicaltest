@@ -67,6 +67,10 @@ class PhotoRepository(private val context: Context,private val ktorapiphoto: Kto
     suspend fun getAllPendingRequest(): List<PendingRequest> {
         return pendingRequestDatabase.pendingRequestDao().getAllPendingRequests()
     }
+
+    suspend fun deletePendingRequestById(photoId: Int){
+        return pendingRequestDatabase.pendingRequestDao().deletePendingRequestsByPhotoId(photoId)
+    }
 }
 
 data class PhotoDomain(

@@ -43,6 +43,7 @@ import com.miguel.asesoftwaretechnicaltest.presentation.detail.DetailScreen
 import com.miguel.asesoftwaretechnicaltest.presentation.detail.DetailViewModel
 import com.miguel.asesoftwaretechnicaltest.presentation.home.HomeScreen
 import com.miguel.asesoftwaretechnicaltest.presentation.home.HomeViewModel
+import com.miguel.asesoftwaretechnicaltest.repository.PendingRequest
 
 import com.miguel.asesoftwaretechnicaltest.ui.theme.AsesoftwaretechnicaltestTheme
 import com.miguel.asesoftwaretechnicaltest.usecase.CheckPendingRequestByIdUseCase
@@ -87,22 +88,30 @@ fun MyApp(viewModel: MyAppViewModel = viewModel()) {
 }
 
 
-class MyAppViewModel(private val getAllPendingRequestUseCase: GetAllPendingRequestUseCase) : ViewModel() {
+class MyAppViewModel(private val getAllPendingRequestUseCase: GetAllPendingRequestUseCase,
+                     private val deletePhotoUseCase: DeletePhotoUseCase) : ViewModel() {
+    private var allPendingRequest:List<PendingRequest> = emptyList()
     companion object {
         fun getInstance(context: Context): MyAppViewModel {
             val getAllPendingRequestUseCase:GetAllPendingRequestUseCase=GetAllPendingRequestUseCase.getInstance(context)
-            return MyAppViewModel(getAllPendingRequestUseCase)
+            val deletePhotoUseCase:DeletePhotoUseCase=DeletePhotoUseCase.getInstance(context)
+            return MyAppViewModel(getAllPendingRequestUseCase,deletePhotoUseCase)
         }
     }
     init {
-        getAllPendingDeleteRequest()
+        viewModelScope.launch {
+            getAllPendingDeleteRequest()
+        }
+
     }
     private fun getAllPendingDeleteRequest(){
         viewModelScope.launch {
 
             when (val result = getAllPendingRequestUseCase.execute(Unit)) {
                 is Success -> {
+                    allPendingRequest=result.data
                     Log.i("AllPendingRequest",result.data.toString())
+                    executeAllPendingRequest(allPendingRequest)
                 }
                 is Error -> {
                     Log.e("ErrorGettingAllPendingRequest",result.message)
@@ -112,6 +121,25 @@ class MyAppViewModel(private val getAllPendingRequestUseCase: GetAllPendingReque
 
         }
     }
+
+    private fun executeAllPendingRequest(listPendingRequest: List<PendingRequest>){
+        viewModelScope.launch {
+            listPendingRequest.forEach {
+                when (val result = deletePhotoUseCase.execute(it.photoId)) {
+                    is Success -> {
+                        Log.i("Execute Delete",it.photoId.toString())
+                    }
+                    is Error -> {
+                        Log.e("ErrorDeletingPendingRequest",result.message)
+
+                    }
+                }
+            }
+        }
+
+    }
+
+
 }
 
 @Composable
