@@ -5,6 +5,7 @@ import io.ktor.client.call.body
 import io.ktor.client.call.receive
 import io.ktor.client.engine.cio.CIO
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.request.delete
 import io.ktor.client.request.get
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.ContentType
@@ -31,6 +32,10 @@ class Ktorapiphoto {
         val response: HttpResponse = client.get("https://jsonplaceholder.typicode.com/photos")
         val dataArray: Array<PhotoEntity> = Json.decodeFromString(response.call.body())
         return dataArray.toList()
+    }
+
+    suspend fun deletePhoto(photoId: Int) {
+        val response:HttpResponse=client.delete("https://jsonplaceholder.typicode.com/photos/$photoId")
     }
 
 }

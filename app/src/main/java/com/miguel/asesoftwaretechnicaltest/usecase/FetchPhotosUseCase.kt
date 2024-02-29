@@ -16,6 +16,7 @@ class FetchPhotosUseCase(private val context: Context, private val photoReposito
     override suspend fun execute(params: Unit): Result<List<PhotoDomain>> {
         return try {
             val result = photoRepository.getPhotos()
+            // poner savephoto en otro use case
             photoRepository.savePhotosLocally(result)
             Success(result)
         } catch (e: Exception) {

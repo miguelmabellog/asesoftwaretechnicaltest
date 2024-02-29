@@ -1,4 +1,9 @@
 package com.miguel.asesoftwaretechnicaltest.presentation.detail
 
-class DetailState {
-}
+import com.miguel.asesoftwaretechnicaltest.repository.PhotoDomain
+
+data class DetailState (
+    val isLoading:Boolean=false,
+    val isError:Boolean=false,
+    val photo:PhotoDomain = PhotoDomain(0,0,"","","")
+)

@@ -116,4 +116,6 @@ dependencies {
     implementation("androidx.room:room-paging:$room_version")
     kapt ("androidx.room:room-compiler:$room_version")
 
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
+
 }

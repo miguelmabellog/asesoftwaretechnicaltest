@@ -16,10 +16,29 @@ class PhotoRepository(private val context: Context,private val ktorapiphoto: Kto
             return PhotoRepository(context, Ktorapiphoto.ktorapiphoto)
         }
     }
+
+
     suspend fun getPhotos(): List<PhotoDomain> {
         return ktorapiphoto.getPhotos().map {
             PhotoDomain(it.albumId, it.id, it.title, it.url, it.thumbnailUrl)
         }
+    }
+
+    suspend fun deletePhoto(photoId: Int) {
+        ktorapiphoto.deletePhoto(photoId)
+    }
+
+    suspend fun getPhotoById(photoId: Int): PhotoDomain {
+        val photoEntity = photoDatabase.photoDao().getPhotoById(photoId)
+
+        return PhotoDomain(
+                albumId = photoEntity?.albumId ?: 0,
+                id = photoEntity?.id ?: 0,
+                title = photoEntity?.title?: "",
+                url = photoEntity?.url?:"",
+                thumbnailUrl = photoEntity?.thumbnailUrl?:""
+            )
+
     }
 
     suspend fun savePhotosLocally(photos: List<PhotoDomain>) {
