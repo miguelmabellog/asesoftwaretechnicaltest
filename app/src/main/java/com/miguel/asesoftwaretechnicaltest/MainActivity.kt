@@ -2,6 +2,7 @@ package com.miguel.asesoftwaretechnicaltest
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -31,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -43,14 +45,20 @@ import com.miguel.asesoftwaretechnicaltest.presentation.home.HomeScreen
 import com.miguel.asesoftwaretechnicaltest.presentation.home.HomeViewModel
 
 import com.miguel.asesoftwaretechnicaltest.ui.theme.AsesoftwaretechnicaltestTheme
+import com.miguel.asesoftwaretechnicaltest.usecase.CheckPendingRequestByIdUseCase
+import com.miguel.asesoftwaretechnicaltest.usecase.DeletePhotoUseCase
+import com.miguel.asesoftwaretechnicaltest.usecase.Error
 import com.miguel.asesoftwaretechnicaltest.usecase.GetAllPendingRequestUseCase
+import com.miguel.asesoftwaretechnicaltest.usecase.GetPhotoByIdUseCase
+import com.miguel.asesoftwaretechnicaltest.usecase.Success
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MyApp()
+            MyApp(MyAppViewModel.getInstance(this))
         }
     }
 }
@@ -58,7 +66,7 @@ class MainActivity : ComponentActivity() {
 
 
 @Composable
-fun MyApp() {
+fun MyApp(viewModel: MyAppViewModel = viewModel()) {
     val navController = rememberNavController()
     val context = LocalContext.current
 
@@ -78,8 +86,32 @@ fun MyApp() {
     }
 }
 
-class MyAppViewModel(){
 
+class MyAppViewModel(private val getAllPendingRequestUseCase: GetAllPendingRequestUseCase) : ViewModel() {
+    companion object {
+        fun getInstance(context: Context): MyAppViewModel {
+            val getAllPendingRequestUseCase:GetAllPendingRequestUseCase=GetAllPendingRequestUseCase.getInstance(context)
+            return MyAppViewModel(getAllPendingRequestUseCase)
+        }
+    }
+    init {
+        getAllPendingDeleteRequest()
+    }
+    private fun getAllPendingDeleteRequest(){
+        viewModelScope.launch {
+
+            when (val result = getAllPendingRequestUseCase.execute(Unit)) {
+                is Success -> {
+                    Log.i("AllPendingRequest",result.data.toString())
+                }
+                is Error -> {
+                    Log.e("ErrorGettingAllPendingRequest",result.message)
+
+                }
+            }
+
+        }
+    }
 }
 
 @Composable

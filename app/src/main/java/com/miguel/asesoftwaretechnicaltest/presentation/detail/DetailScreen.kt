@@ -44,8 +44,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun DetailScreen(photoId: Int?,navController: NavController, viewModel: DetailViewModel = viewModel()) {
 
-    if(photoId!=null)
-    viewModel.findPhotoById(photoId)
+    if(photoId!=null) {
+        viewModel.findPhotoById(photoId)
+    }
 
     val photoState by viewModel.state.collectAsState(initial = DetailState())
     val scope = rememberCoroutineScope()
