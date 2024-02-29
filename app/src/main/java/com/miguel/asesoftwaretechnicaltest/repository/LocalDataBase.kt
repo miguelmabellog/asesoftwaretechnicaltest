@@ -35,23 +35,23 @@ interface PhotoDao {
 
 
 @Database(entities = [PhotoEntity::class], version = 1)
-abstract class PhotoDatabase : RoomDatabase() {
+abstract class PhotoLocalDatabase : RoomDatabase() {
     abstract fun photoDao(): PhotoDao
 
     companion object {
         @Volatile
-        private var instance: PhotoDatabase? = null
+        private var instance: PhotoLocalDatabase? = null
 
-        fun getInstance(context: Context): PhotoDatabase {
+        fun getInstance(context: Context): PhotoLocalDatabase {
             return instance ?: synchronized(this) {
                 instance ?: buildDatabase(context).also { instance = it }
             }
         }
 
-        private fun buildDatabase(context: Context): PhotoDatabase {
+        private fun buildDatabase(context: Context): PhotoLocalDatabase {
             return Room.databaseBuilder(
                 context.applicationContext,
-                PhotoDatabase::class.java,
+                PhotoLocalDatabase::class.java,
                 "photo_database"
             ).build()
         }

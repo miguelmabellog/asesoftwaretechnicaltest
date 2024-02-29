@@ -43,6 +43,7 @@ import com.miguel.asesoftwaretechnicaltest.presentation.home.HomeScreen
 import com.miguel.asesoftwaretechnicaltest.presentation.home.HomeViewModel
 
 import com.miguel.asesoftwaretechnicaltest.ui.theme.AsesoftwaretechnicaltestTheme
+import com.miguel.asesoftwaretechnicaltest.usecase.GetAllPendingRequestUseCase
 import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
@@ -61,6 +62,10 @@ fun MyApp() {
     val navController = rememberNavController()
     val context = LocalContext.current
 
+
+
+
+
     NavHost(navController, startDestination = "splash") {
         composable("splash") { SplashScreen(navController) }
         //Utilizar factory es una mejor practica
@@ -71,6 +76,10 @@ fun MyApp() {
             DetailScreen(photoId = photoId,navController, DetailViewModel.getInstance(context))
         }
     }
+}
+
+class MyAppViewModel(){
+
 }
 
 @Composable

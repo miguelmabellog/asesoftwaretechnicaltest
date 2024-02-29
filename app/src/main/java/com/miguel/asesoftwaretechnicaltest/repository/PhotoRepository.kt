@@ -1,15 +1,18 @@
 package com.miguel.asesoftwaretechnicaltest.repository
 
 import android.content.Context
-import androidx.room.Room
 import com.miguel.asesoftwaretechnicaltest.data.KtorApiInterface
 import com.miguel.asesoftwaretechnicaltest.data.Ktorapiphoto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 class PhotoRepository(private val context: Context,private val ktorapiphoto: KtorApiInterface) {
-    private val photoDatabase: PhotoDatabase by lazy {
-        PhotoDatabase.getInstance(context)
+    private val photoLocalDatabase: PhotoLocalDatabase by lazy {
+        PhotoLocalDatabase.getInstance(context)
+    }
+
+    private val pendingRequestDatabase: AppDatabase by lazy {
+        AppDatabase.getInstance(context)
     }
 
     companion object {
@@ -30,7 +33,7 @@ class PhotoRepository(private val context: Context,private val ktorapiphoto: Kto
     }
 
     suspend fun getPhotoById(photoId: Int): PhotoDomain {
-        val photoEntity = photoDatabase.photoDao().getPhotoById(photoId)
+        val photoEntity = photoLocalDatabase.photoDao().getPhotoById(photoId)
 
         return PhotoDomain(
                 albumId = photoEntity?.albumId ?: 0,
@@ -47,8 +50,22 @@ class PhotoRepository(private val context: Context,private val ktorapiphoto: Kto
             PhotoEntity(it.id, it.albumId, it.title, it.url, it.thumbnailUrl)
         }
         withContext(Dispatchers.IO) {
-            photoDatabase.photoDao().insertPhotos(entities)
+            photoLocalDatabase.photoDao().insertPhotos(entities)
         }
+    }
+
+    suspend fun savePendingDeleteByID(photoId: Int){
+        withContext(Dispatchers.IO) {
+            pendingRequestDatabase.pendingRequestDao().insert(PendingRequest(photoId = photoId))
+        }
+    }
+
+    suspend fun getPendingDeleteById(photoId: Int): PendingRequest? {
+        return pendingRequestDatabase.pendingRequestDao().getPendingRequestByPhotoId(photoId)
+    }
+
+    suspend fun getAllPendingRequest(): List<PendingRequest> {
+        return pendingRequestDatabase.pendingRequestDao().getAllPendingRequests()
     }
 }
 

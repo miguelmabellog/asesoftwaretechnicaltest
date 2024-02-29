@@ -110,11 +110,17 @@ fun DetailScreen(photoId: Int?,navController: NavController, viewModel: DetailVi
     )
     LaunchedEffect(photoState.showSnackBar) {
         if (photoState.showSnackBar) {
-            val message=if (viewModel.state.value.dataDeleted){
-                "data deleted"
-            }else{
-                "Error to delete data"
-            }
+            val message=
+                if (viewModel.state.value.isPendingToDelete){
+                    "data is already pending to delete"
+                }else{
+                    if (viewModel.state.value.dataDeleted){
+                        "data deleted"
+                    }else{
+                        "Error to delete data"
+                    }
+                }
+
             snackbarHostState.showSnackbar(message)
             viewModel.resetSnackBar()
         }

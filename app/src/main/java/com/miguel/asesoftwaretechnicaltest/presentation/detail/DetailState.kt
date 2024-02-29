@@ -7,5 +7,7 @@ data class DetailState (
     val isError:Boolean=false,
     val photo:PhotoDomain = PhotoDomain(0,0,"","",""),
     val showSnackBar:Boolean=false,
-    val dataDeleted:Boolean=false
+    val dataDeleted:Boolean=false,
+    val isPendingToDelete:Boolean=false
+
 )
