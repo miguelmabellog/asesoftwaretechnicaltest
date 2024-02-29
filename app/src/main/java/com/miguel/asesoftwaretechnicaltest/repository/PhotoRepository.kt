@@ -2,11 +2,12 @@ package com.miguel.asesoftwaretechnicaltest.repository
 
 import android.content.Context
 import androidx.room.Room
+import com.miguel.asesoftwaretechnicaltest.data.KtorApiInterface
 import com.miguel.asesoftwaretechnicaltest.data.Ktorapiphoto
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class PhotoRepository(private val context: Context,private val ktorapiphoto: Ktorapiphoto) {
+class PhotoRepository(private val context: Context,private val ktorapiphoto: KtorApiInterface) {
     private val photoDatabase: PhotoDatabase by lazy {
         PhotoDatabase.getInstance(context)
     }

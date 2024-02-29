@@ -16,7 +16,7 @@ import kotlinx.serialization.json.Json
 
 import kotlinx.serialization.json.JsonArray
 
-class Ktorapiphoto {
+class Ktorapiphoto:KtorApiInterface {
     companion object {
         val ktorapiphoto = Ktorapiphoto()
     }
@@ -28,13 +28,13 @@ class Ktorapiphoto {
         }
     }
 
-    suspend fun getPhotos(): List<PhotoEntity> {
+    override suspend fun getPhotos(): List<PhotoEntity> {
         val response: HttpResponse = client.get("https://jsonplaceholder.typicode.com/photos")
         val dataArray: Array<PhotoEntity> = Json.decodeFromString(response.call.body())
         return dataArray.toList()
     }
 
-    suspend fun deletePhoto(photoId: Int) {
+    override suspend fun deletePhoto(photoId: Int) {
         val response:HttpResponse=client.delete("https://jsonplaceholder.typicode.com/photos/$photoId")
     }
 
